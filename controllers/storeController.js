@@ -78,7 +78,6 @@ exports.getStoreBySlug = async (req, res, next) => {
     const store = await Store.findOne({slug: req.params.slug});
     //If there is null returned call next to send it to a not found
     if(!store) return next();
-    console.log(store.photo)
     res.render('store', { store, title: store.name });
 
 }
