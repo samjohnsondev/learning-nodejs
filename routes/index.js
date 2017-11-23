@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const storeController = require('../controllers/storeController');
+const authController = require('../controllers/authController');
 const userController = require('../controllers/userController'); 
 const { catchErrors } = require('../handlers/errorHandlers');
 
@@ -23,8 +24,11 @@ router.post('/add/:id',
 
 router.post('/register',
     userController.validateRegister,
+    userController.register,
+    authController.login
 ) 
 
+router.post('/login', authController.login);
 
 router.get('/stores/:id/edit', catchErrors(storeController.editStore));
 //Go to the page for each store
@@ -33,5 +37,6 @@ router.get('/tags/', catchErrors(storeController.getStoreByTag));
 router.get('/tags/:tag', catchErrors(storeController.getStoreByTag));
 router.get('/login', userController.loginForm);
 router.get('/register', userController.registerForm);
+router.get('/logout', authController.logout);
 
 module.exports = router;
