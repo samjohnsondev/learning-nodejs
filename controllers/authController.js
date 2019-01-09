@@ -1,6 +1,7 @@
 const passport = require('passport');
 const mongoose = require('mongoose');
 const User = mongoose.model('User');
+const crypto = require('crypto');
 
 exports.login = passport.authenticate('local', {
     failureRedirect: '/login',
@@ -33,4 +34,13 @@ exports.forgot = async (req, res) => {
         req.flash('error', 'Email not found...');
         return res.redirect('/login');
     }
-}
+
+    user.resetPasswordToken = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordExpires = Date.now() + 3600000; //1 hour
+    await user.save();
+
+    const resetURL = `http://${req.headers.host}/account/reset/${user.resetPasswordToken}`;
+    req.flash('success', `You have been emailed details to reset ${resetURL}`);
+
+    res.redirect('/login');
+};
